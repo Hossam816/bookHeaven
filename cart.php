@@ -14,7 +14,6 @@ if(isset($_POST['update_cart'])){
    $cart_id = $_POST['cart_id'];
    $cart_quantity = $_POST['cart_quantity'];
    mysqli_query($conn, "UPDATE `cart` SET quantity = '$cart_quantity' WHERE id = '$cart_id'") or die('query failed');
-   $message[] = 'cart quantity updated!';
 }
 
 if(isset($_GET['delete'])){
@@ -45,6 +44,36 @@ if(isset($_GET['delete_all'])){
    <link rel="stylesheet" href="css/style.css">
 
 </head>
+<style>
+   .alert, .success{
+      width:50%;
+      height: 50px;
+      border-radius:8px;
+      margin: 10px auto;
+      display: flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content: center;
+   }
+   .alert{
+      background-color:#FF7D7D ;
+   }
+   .alert h2{
+      text-transform:uppercase;
+      letter-spacing: 0.15rem;
+      font-weight: 400;
+
+   }
+   .success{
+      background-color:#B7F587;
+   }
+   .success h2{
+      text-transform:uppercase;
+      letter-spacing: 0.15rem;
+      font-weight: 400;
+
+   }
+</style>
 <body>
    
 <?php include 'header.php'; ?>
@@ -85,9 +114,18 @@ if(isset($_GET['delete_all'])){
       }
       ?>
    </div>
+   <?php if(isset($_POST['update_cart'])&&empty($message)){?>
+         <div class="success">
+            <h2>cart quantity updated !</h2>
+         </div>
+      <?php }elseif(!empty($message)){?>
+         <div class="alert">
+            <h2>There is an error!</h2>
+         </div>
+      <?php }?> 
 
    <div style="margin-top: 2rem; text-align:center;">
-      <a href="cart.php?delete_all" class="delete-btn <?php echo ($grand_total > 1)?'':'disabled'; ?>" onclick="return confirm('delete all from cart?');">delete all</a>
+      <a href="cart.php?delete_all" class="delete-btn <?php echo ($grand_total > 1)?'':'disabled'; ?>" onclick="return confirm('delete all from cart?');">delete all</a> 
    </div>
 
    <div class="cart-total">

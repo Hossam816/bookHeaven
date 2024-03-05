@@ -1,4 +1,5 @@
 <?php
+$message=[];
 
 include 'config.php';
 
@@ -93,6 +94,10 @@ if(isset($_POST['update_product'])){
    <link rel="stylesheet" href="css/admin_style.css">
 
 </head>
+
+<style>
+   
+</style>
 <body>
    
 <?php include 'admin_header.php'; ?>

@@ -1,6 +1,7 @@
 <?php
 
 include 'config.php';
+include 'validate.php';
 
 session_start();
 
@@ -23,6 +24,16 @@ if(isset($_POST['order_btn'])){
    $cart_products[] = '';
 
    $cart_query = mysqli_query($conn, "SELECT * FROM `cart` WHERE user_id = '$user_id'") or die('query failed');
+   /**Validation */
+   if(!filter_var($email,FILTER_VALIDATE_EMAIL)){
+      $message[] = "Invalid Email Format";
+   }
+   if(!validateName($name)){
+      $message[] = "Invalid Name Format";
+   }
+   if(!validatePhoneNumber($number)){
+      $message[] = "Invalid Phone Number Format";
+   }
    if(mysqli_num_rows($cart_query) > 0){
       while($cart_item = mysqli_fetch_assoc($cart_query)){
          $cart_products[] = $cart_item['name'].' ('.$cart_item['quantity'].') ';
@@ -66,6 +77,37 @@ if(isset($_POST['order_btn'])){
    <link rel="stylesheet" href="css/style.css">
 
 </head>
+<style>
+   .alert, .success{
+      width:50%;
+      height: 50px;
+      border-radius:8px;
+      margin: 10px auto;
+      display: flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content: center;
+   }
+   .alert{
+      background-color:#FF7D7D ;
+   }
+   .alert h2{
+      text-transform:uppercase;
+      letter-spacing: 0.15rem;
+      font-weight: 400;
+
+   }
+   .success{
+      background-color:#B7F587;
+   }
+   .success h2{
+      text-transform:uppercase;
+      letter-spacing: 0.15rem;
+      font-weight: 400;
+
+   }
+</style>
+
 <body>
    
 <?php include 'header.php'; ?>
@@ -104,14 +146,17 @@ if(isset($_POST['order_btn'])){
          <div class="inputBox">
             <span>your name :</span>
             <input type="text" name="name" required placeholder="enter your name">
+            <label for="" style="color:red;font-size:1.7rem; text-align:left; display:<?php echo (empty($message)) ? 'none' : 'block'; ?>;">Invalid Name format!</label>
          </div>
          <div class="inputBox">
             <span>your number :</span>
             <input type="number" name="number" required placeholder="enter your number">
+            <label for="" style="color:red;font-size:1.7rem; text-align:left; display:<?php echo (empty($message)) ? 'none' : 'block'; ?>;">Invalid Phone Number!</label>
          </div>
          <div class="inputBox">
             <span>your email :</span>
             <input type="email" name="email" required placeholder="enter your email">
+            <label for="" style="color:red;font-size:1.7rem; text-align:left; display:<?php echo (empty($message)) ? 'none' : 'block'; ?>;">Invalid Email Format!</label>
          </div>
          <div class="inputBox">
             <span>payment method :</span>

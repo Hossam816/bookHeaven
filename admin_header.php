@@ -10,6 +10,19 @@ if(isset($message)){
    }
 }
 ?>
+<style>
+   .message span{
+      width: 100%;
+      text-align:left;
+      display:block;
+      padding-left: 6px;
+      font-size:18px;
+      font-weight:bold;
+      text-transform: capitalize;
+      font-family: sans-serif;
+      color: #E75555
+   }
+</style>
 
 <header class="header">
 

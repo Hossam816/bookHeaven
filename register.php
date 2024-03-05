@@ -1,13 +1,14 @@
 <?php
 
 include 'config.php';
+include "validate.php";
 
 if(isset($_POST['submit'])){
 
    $name = mysqli_real_escape_string($conn, $_POST['name']);
    $email = mysqli_real_escape_string($conn, $_POST['email']);
-   $pass = mysqli_real_escape_string($conn, md5($_POST['password']));
-   $cpass = mysqli_real_escape_string($conn, md5($_POST['cpassword']));
+   $pass = mysqli_real_escape_string($conn, $_POST['password']);
+   $cpass = mysqli_real_escape_string($conn, $_POST['cpassword']);
    $user_type = $_POST['user_type'];
 
    $select_users = mysqli_query($conn, "SELECT * FROM `users` WHERE email = '$email' AND password = '$pass'") or die('query failed');
@@ -18,11 +19,20 @@ if(isset($_POST['submit'])){
       if($pass != $cpass){
          $message[] = 'confirm password not matched!';
       }else{
-         mysqli_query($conn, "INSERT INTO `users`(name, email, password, user_type) VALUES('$name', '$email', '$cpass', '$user_type')") or die('query failed');
-         $message[] = 'registered successfully!';
-         header('location:login.php');
+            //validate name and password
+            if(!validateName($name)){
+               $message[] = 'Invalid Name! Only letters are allowed';
+            }
+            if(!validatePassword($pass)){
+               $message[] = 'Password must contain at least one uppercase letter, one symbol, one number, and be between 8 and 16 characters.';
+            }
+            if(empty($message)){
+               mysqli_query($conn, "INSERT INTO `users`(name, email, password, user_type) VALUES('$name', '$email', '$cpass', '$user_type')") or die('query failed');
+               $message[] = 'registered successfully!';
+               header('location:login.php');
+            }
+         }
       }
-   }
 
 }
 
@@ -59,7 +69,24 @@ if(isset($message)){
    }
 }
 ?>
-   
+<style>
+   .pass_resgister{
+      width: 100%;
+      display: flex;
+      justify-content:flex-start
+   }
+   .pass_resgister ul{
+      list-style-type:none;
+      display: flex;
+      flex-direction:column;
+      align-items:flex-start;
+      gap: 1rem
+   }
+   .pass_resgister ul li{
+      font-size: 15px;
+      color:<?php echo (empty($message)) ? 'green' : 'red'; ?>;
+   }
+</style>
 <div class="form-container">
 
    <form action="" method="post">
@@ -72,6 +99,14 @@ if(isset($message)){
          <option value="user">user</option>
          <option value="admin">admin</option>
       </select>
+      <div class="pass_resgister">
+         <ul>
+            <li>Contain 1 uppercase letter</li>
+            <li>Contain 1 symbol</li>
+            <li>Contain 1 number</li>
+            <li>Must not be less than 16 char</li>
+         </ul>
+      </div>
       <input type="submit" name="submit" value="register now" class="btn">
       <p>already have an account? <a href="login.php">login now</a></p>
    </form>
